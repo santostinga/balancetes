@@ -20,14 +20,14 @@ final class CfGrupoBalancete
             throw new \InvalidArgumentException('Exercício inválido.');
         }
 
-        $this->bootChart();
+        $this->bootChart(2024);
         $this->postAbertura2024();
         $this->postOperacoes2024();
 
         if ($year === 2025) {
             $profit = $this->resultado();
             $abertura = $this->saldosFolhaBalanco();
-            $this->bootChart();
+            $this->bootChart(2025);
             foreach ($abertura as $codigo => $saldo) {
                 if ($saldo > 0) {
                     $this->post($codigo, $saldo, 0);
@@ -119,11 +119,11 @@ HTML;
         return $sign . number_format(abs($cents) / 100, 2, ',', ' ');
     }
 
-    private function bootChart(): void
+    private function bootChart(int $year): void
     {
         $this->accounts = [];
         $this->order = [];
-        foreach ($this->chart() as [$codigo, $nome, $nivel, $parent]) {
+        foreach ($this->chart($year) as [$codigo, $nome, $nivel, $parent]) {
             $this->accounts[$codigo] = [
                 'codigo' => $codigo,
                 'nome' => $nome,
@@ -285,7 +285,7 @@ HTML;
         $this->lancar([
             ['2115', $adicionais, 0],
             ['4431', $ivaAd, 0],
-            ['4211012', 0, $adicionais + $ivaAd],
+            ['4211006', 0, $adicionais + $ivaAd],
         ]);
         $this->lancar([
             ['451', $this->mt24(80_500), 0],
@@ -324,11 +324,13 @@ HTML;
 
         $servicos = $this->mt24(486_750);
         $ivaServ = (int) round($servicos * 0.16);
-        $this->lancar([
-            ['4111001', $servicos + $ivaServ, 0],
-            ['722', 0, $servicos],
-            ['4432', 0, $ivaServ],
-        ]);
+        $linhasServ = [];
+        foreach ($this->repartir($servicos + $ivaServ, $this->pesosServicos(2024)) as $conta => $valor) {
+            $linhasServ[] = [$conta, $valor, 0];
+        }
+        $linhasServ[] = ['722', 0, $servicos];
+        $linhasServ[] = ['4432', 0, $ivaServ];
+        $this->lancar($linhasServ);
 
         $cogs = [
             '6111' => $this->mt24(3_710_980),
@@ -348,13 +350,32 @@ HTML;
 
         $receber = $totalVendas + $ivaVendas + $servicos + $ivaServ;
         $recebido = (int) round($receber * 0.905);
-        $recPartes = $this->repartir($recebido, $this->pesosClientes(2024));
-        foreach ($recPartes as $conta => $valor) {
+        $saldosCli = $clientesVenda;
+        foreach ($this->repartir($servicos + $ivaServ, $this->pesosServicos(2024)) as $conta => $valor) {
+            $saldosCli[$conta] = ($saldosCli[$conta] ?? 0) + $valor;
+        }
+        foreach ($this->alocarLiquidacao($saldosCli, $recebido, [
+            $this->codigoCliente(1),
+            $this->codigoCliente(3),
+            $this->codigoCliente(5),
+        ]) as $conta => $valor) {
+            if ($valor === 0) {
+                continue;
+            }
             $this->lancar([[$this->bancoPorValor((int) $valor), $valor, 0], [$conta, 0, $valor]]);
         }
 
         $pagoForn = (int) round(($totalCompras + $ivaCompras + $adicionais + $ivaAd) * 0.88);
-        foreach ($this->repartir($pagoForn, $fornPesos + ['4211012' => 4]) as $conta => $valor) {
+        $saldosForn = $this->repartir($totalCompras + $ivaCompras, $fornPesos);
+        $saldosForn['4211006'] = ($saldosForn['4211006'] ?? 0) + $adicionais + $ivaAd;
+        foreach ($this->alocarLiquidacao($saldosForn, $pagoForn, [
+            $this->codigoFornecedor(1),
+            $this->codigoFornecedor(2),
+            $this->codigoFornecedor(4),
+        ]) as $conta => $valor) {
+            if ($valor === 0) {
+                continue;
+            }
             $this->lancar([[$conta, $valor, 0], ['12111', 0, $valor]]);
         }
 
@@ -458,11 +479,11 @@ HTML;
         $this->lancar([
             ['2115', $adicionais, 0],
             ['4431', $ivaAd, 0],
-            ['4211012', 0, $adicionais + $ivaAd],
+            ['4211009', 0, $adicionais + $ivaAd],
         ]);
         $this->lancar([
             ['451', 0, $this->mt25(28_500)],
-            ['4211002', $this->mt25(28_500), 0],
+            ['4211009', $this->mt25(28_500), 0],
         ]);
         $this->lancar([
             ['451', $this->mt25(41_200), 0],
@@ -501,11 +522,13 @@ HTML;
 
         $servicos = $this->mt25(562_180);
         $ivaServ = (int) round($servicos * 0.16);
-        $this->lancar([
-            ['4111004', $servicos + $ivaServ, 0],
-            ['722', 0, $servicos],
-            ['4432', 0, $ivaServ],
-        ]);
+        $linhasServ = [];
+        foreach ($this->repartir($servicos + $ivaServ, $this->pesosServicos(2025)) as $conta => $valor) {
+            $linhasServ[] = [$conta, $valor, 0];
+        }
+        $linhasServ[] = ['722', 0, $servicos];
+        $linhasServ[] = ['4432', 0, $ivaServ];
+        $this->lancar($linhasServ);
 
         $cogs = [
             '6111' => $this->mt25(4_040_500),
@@ -525,12 +548,19 @@ HTML;
 
         $receber = $totalVendas + $ivaVendas + $servicos + $ivaServ;
         $recebido = (int) round($receber * 0.918);
-        foreach ($this->repartir($recebido, $this->pesosClientes(2025)) as $conta => $valor) {
+        $saldosCli = $clientesVenda;
+        foreach ($this->repartir($servicos + $ivaServ, $this->pesosServicos(2025)) as $conta => $valor) {
+            $saldosCli[$conta] = ($saldosCli[$conta] ?? 0) + $valor;
+        }
+        foreach ($this->repartir($recebido, $saldosCli) as $conta => $valor) {
+            if ($valor === 0) {
+                continue;
+            }
             $this->lancar([[$this->bancoPorValor((int) $valor), $valor, 0], [$conta, 0, $valor]]);
         }
 
         $pagoForn = (int) round(($totalCompras + $ivaCompras + $adicionais + $ivaAd) * 0.90);
-        foreach ($this->repartir($pagoForn, $fornPesos + ['4211012' => 4]) as $conta => $valor) {
+        foreach ($this->repartir($pagoForn, $fornPesos + ['4211009' => 4]) as $conta => $valor) {
             $this->lancar([[$conta, $valor, 0], ['12111', 0, $valor]]);
         }
 
@@ -663,26 +693,150 @@ HTML;
     /** @return array<string,int> */
     private function pesosClientes(int $year): array
     {
-        $nomes = $this->clientesNomes();
-        $n = count($nomes);
-        $out = [];
-        for ($i = 1; $i <= $n; $i++) {
-            $pos = $year === 2025 ? ($n - $i + 1) : $i;
-            $out[$this->codigoCliente($i)] = max(1, 14 - (int) floor(($pos - 1) / 14));
+        if ($year === 2024) {
+            return [
+                $this->codigoCliente(1) => 28,
+                $this->codigoCliente(2) => 18,
+                $this->codigoCliente(3) => 14,
+                $this->codigoCliente(4) => 11,
+                $this->codigoCliente(5) => 9,
+                $this->codigoCliente(6) => 7,
+                $this->codigoCliente(7) => 5,
+                $this->codigoCliente(8) => 3,
+            ];
         }
 
-        return $out;
+        return [
+            $this->codigoCliente(1) => 12,
+            $this->codigoCliente(3) => 22,
+            $this->codigoCliente(5) => 16,
+            $this->codigoCliente(9) => 19,
+            $this->codigoCliente(10) => 14,
+            $this->codigoCliente(11) => 8,
+            $this->codigoCliente(12) => 6,
+            $this->codigoCliente(13) => 4,
+        ];
     }
 
     /** @return array<string,int> */
     private function pesosFornecedores(int $year): array
     {
-        $nomes = $this->fornecedoresNomes();
-        $n = count($nomes);
+        if ($year === 2024) {
+            return [
+                $this->codigoFornecedor(1) => 26,
+                $this->codigoFornecedor(2) => 18,
+                $this->codigoFornecedor(3) => 14,
+                $this->codigoFornecedor(4) => 11,
+                $this->codigoFornecedor(5) => 9,
+                $this->codigoFornecedor(6) => 8,
+                $this->codigoFornecedor(7) => 6,
+                $this->codigoFornecedor(8) => 4,
+            ];
+        }
+
+        return [
+            $this->codigoFornecedor(1) => 10,
+            $this->codigoFornecedor(2) => 18,
+            $this->codigoFornecedor(4) => 13,
+            $this->codigoFornecedor(9) => 20,
+            $this->codigoFornecedor(10) => 15,
+            $this->codigoFornecedor(11) => 9,
+            $this->codigoFornecedor(12) => 7,
+            $this->codigoFornecedor(13) => 5,
+        ];
+    }
+
+    /** @return array<string,int> */
+    private function pesosServicos(int $year): array
+    {
+        if ($year === 2024) {
+            return [
+                $this->codigoCliente(1) => 55,
+                $this->codigoCliente(5) => 28,
+                $this->codigoCliente(7) => 17,
+            ];
+        }
+
+        return [
+            $this->codigoCliente(3) => 42,
+            $this->codigoCliente(9) => 33,
+            $this->codigoCliente(13) => 25,
+        ];
+    }
+
+    /**
+     * @return list<array{0:string,1:string}>
+     */
+    private function fseContas(int $year): array
+    {
+        if ($year === 2024) {
+            return [
+                ['63211', 'Conservação e reparação - Electrotec'],
+                ['63213', 'Combustíveis - PETROMOC'],
+                ['63221', 'Material de escritório - Mercury Comercial'],
+                ['63231', 'Electricidade - EDM'],
+                ['63232', 'Água - Águas da Região de Maputo'],
+                ['63233', 'Comunicações - Teledata de Moçambique'],
+                ['63234', 'Internet - Tv Cabo'],
+                ['63235', 'Rendas e alugueres - IMOPAR'],
+                ['63236', 'Transporte de mercadorias - Transportes Lalgy'],
+                ['63237', 'Manutenção de viaturas - Centrocar'],
+                ['63238', 'Segurança e vigilância - G4S'],
+                ['63239', 'Limpeza de instalações - Folha Verde'],
+                ['63241', 'Publicidade e propaganda - Sociedade do Notícias'],
+                ['63242', 'Seguros - Hollard Moçambique'],
+                ['63243', 'Honorários de contabilidade - KPMG'],
+            ];
+        }
+
+        return [
+            ['63211', 'Conservação e reparação - Belutécnica'],
+            ['63213', 'Combustíveis - TotalEnergies Moçambique'],
+            ['63221', 'Material de escritório - Construa'],
+            ['63231', 'Electricidade - Motraco'],
+            ['63232', 'Água - F&L Águas e Sistemas'],
+            ['63233', 'Comunicações - Contact Moçambique'],
+            ['63234', 'Internet - Televisa'],
+            ['63235', 'Rendas e alugueres - Domus'],
+            ['63236', 'Transporte de mercadorias - Transportes Carlos Mesquita'],
+            ['63237', 'Manutenção de viaturas - Mecwide Moçambique'],
+            ['63238', 'Segurança e vigilância - Sanlo Moçambique'],
+            ['63239', 'Limpeza de instalações - Limpers'],
+            ['63241', 'Publicidade e propaganda - Rádio Moçambique'],
+            ['63242', 'Seguros - EMOSE'],
+            ['63243', 'Honorários de contabilidade - Consultec'],
+        ];
+    }
+
+    /**
+     * Liquida primeiro as contas que não continuam no ano seguinte.
+     * O total liquidado permanece $total.
+     *
+     * @param array<string,int> $saldos
+     * @param list<string> $manter
+     * @return array<string,int>
+     */
+    private function alocarLiquidacao(array $saldos, int $total, array $manter): array
+    {
         $out = [];
-        for ($i = 1; $i <= $n; $i++) {
-            $pos = $year === 2025 ? ($n - $i + 1) : $i;
-            $out[$this->codigoFornecedor($i)] = max(1, 16 - (int) floor(($pos - 1) / 4));
+        $resto = $total;
+        $manterFlip = array_fill_keys($manter, true);
+        foreach ($saldos as $conta => $saldo) {
+            if (isset($manterFlip[$conta]) || $saldo <= 0 || $resto <= 0) {
+                continue;
+            }
+            $pago = min($saldo, $resto);
+            $out[$conta] = $pago;
+            $resto -= $pago;
+        }
+        $pesosRestantes = [];
+        foreach ($manter as $conta) {
+            $pesosRestantes[$conta] = max(1, (int) ($saldos[$conta] ?? 0));
+        }
+        if ($resto > 0 && $pesosRestantes !== []) {
+            foreach ($this->repartir($resto, $pesosRestantes) as $conta => $valor) {
+                $out[$conta] = ($out[$conta] ?? 0) + $valor;
+            }
         }
 
         return $out;
@@ -784,30 +938,19 @@ HTML;
     private function clientesNomes(): array
     {
         return [
-            'Hotel Polana', 'Hotel Avenida', 'Hotel Tivoli Maputo', 'Grupo Pestana', 'Grupo VIP', 'Turvisa',
-            'Lin Limpezas', 'Clean Africa', 'Limpers', 'Ecolife', 'Help Multiservice', 'Ping Serviços',
-            'Mega Distribuição', 'Tropigalia', 'Unicomo', 'Pers Shop', 'BAT', 'Moçambique Terramar Trading',
-            'Kambeny Comercial', 'Procongel', 'Global Health', 'F&L Águas e Sistemas', 'Paramédicos', 'Mozambique Good Trade',
-            'CDM', 'Coca-Cola Sabco Moçambique', 'Mozal', 'Vulcan Moçambique', 'HCB', 'Sasol Petroleum Temane',
-            'Mozambique Leaf Tobacco', 'Cimentos de Moçambique', 'CMH', 'Eni Rovuma Basin', 'Cimentos de Nacala', 'SAT',
-            'Lactalis Produtos Alimentares', 'Beiranave', 'Modet', 'Incala', 'Cimbetão', 'Siesta',
-            'Ocean Fresh', 'Indústria e Construções Sotomane', 'Montepuez Ruby Mining',
-            'Mota-Engil África', 'CMC Africa Austral', 'SS-Construções', 'WBHO Projects Mozambique', 'Teixeira Duarte',
-            'Martifer Visabeira', 'Sogitel', 'CAPA Engenharia', 'SETH', 'Sanlo Moçambique',
-            'CFM', 'EMODRAGA', 'Cornelder', 'MPDC', 'LAM', 'Terminal de Carvão da Matola',
-            'Aeroportos de Moçambique', 'AGL/Bolloré', 'Matola Cargo Terminal', 'EMTPM', 'MAHS', 'Rangel',
-            'Maputo Car Terminal', 'PIL', 'SERMOZ', 'STEMA', 'TTI', 'Skynet',
-            'PERMAR', 'TL', 'CMA CGM', 'MEX',
-            'Motraco', 'Contact Moçambique', 'Televisa', 'Consultec', 'Operadora da Estrada do Zambeze', 'Domus',
-            'Grindrod Mozambique', 'Gondwana', 'PLM', 'Visabeira', 'Pinto & Cruz', 'SDVE',
-            'Hidroáfrica', 'Aries Sercon', 'COTUR', 'Dora Consultores', 'GMS', 'Logica Tecnologia',
-            'SDI', '2iBi', 'SEG', 'Howard Johnson Associates', 'Colliers', 'Escopil Holding',
-            'Unity Designer', 'Autrase', 'Tihove Trading', 'Sotel', 'Zoe Comércio Construções', 'Pine3',
-            'Maputo Relocation Solutions', 'Susamati', 'Tecninfo', 'JF Travel & Serviços', 'IMOPETRO',
-            'EMOSE', 'ICE Seguros', 'Global Alliance Insurance', 'SIM', 'Companhia de Seguros Índico', 'MCS',
-            'Emeritus Resseguros', 'Britam', 'ARIS Seguros', 'CMS Seguros',
-            'Rádio Moçambique', 'Business Connexion (BCX)', 'TVSD',
-            'Pescamar', 'Efripel', 'SIP', 'Belúzi Bananas', 'SAN', 'Pescabom',
+            'Hotel Polana',
+            'Hotel Avenida',
+            'Lin Limpezas',
+            'Clean Africa',
+            'Mega Distribuição',
+            'Tropigalia',
+            'CDM',
+            'Coca-Cola Sabco Moçambique',
+            'Grupo VIP',
+            'Turvisa',
+            'Pers Shop',
+            'Help Multiservice',
+            'Ping Serviços',
         ];
     }
 
@@ -815,13 +958,19 @@ HTML;
     private function fornecedoresNomes(): array
     {
         return [
-            'Técnica Industrial', 'Caetano Equipamentos', 'Medis Farmacêutica', 'Neoquímica', 'Omnia Holding',
-            'Embalagens Mpact', 'Topack Moçambique', 'Farmac', 'PETROMOC', 'TotalEnergies Moçambique',
-            'Electrotec', 'Transitex', 'Transportes Lalgy', 'Puma Energy', 'Manica Freight Services',
-            'Tecnel Service', 'Rimpex', 'Bearing Man', 'Afritool', 'Intermetal',
-            'Tintas CIN', 'Aberdare Intelec', 'Celmoque', 'Construa', 'Fuchs',
-            'GESPETRO', 'Autogás', 'Petrogal/Galp', 'Mecwide Moçambique', 'Sulbrita',
-            'Transportes Carlos Mesquita', 'Belutécnica', 'CMA CGM', 'Cornelder',
+            'Técnica Industrial',
+            'Caetano Equipamentos',
+            'Medis Farmacêutica',
+            'Embalagens Mpact',
+            'PETROMOC',
+            'Transitex',
+            'Transportes Lalgy',
+            'Puma Energy',
+            'Neoquímica',
+            'Topack Moçambique',
+            'Electrotec',
+            'Manica Freight Services',
+            'Tecnel Service',
         ];
     }
 
@@ -995,7 +1144,7 @@ HTML;
     }
 
     /** @return list<array{0:string,1:string,2:int,3:?string}> */
-    private function chart(): array
+    private function chart(int $year): array
     {
         $c = [];
         $add = function (string|int $codigo, string $nome, int $nivel, string|int|null $parent) use (&$c) {
@@ -1116,21 +1265,9 @@ HTML;
 
         $add('63', 'Fornecimentos e serviços de terceiros', 1, null);
         $add('632', 'Fornecimentos e serviços', 2, '63');
-        $add('63211', 'Conservação e reparação - Electrotec', 3, '632');
-        $add('63213', 'Combustíveis - PETROMOC', 3, '632');
-        $add('63221', 'Material de escritório - Mercury Comercial', 3, '632');
-        $add('63231', 'Electricidade - EDM', 3, '632');
-        $add('63232', 'Água - Águas da Região de Maputo', 3, '632');
-        $add('63233', 'Comunicações - Teledata de Moçambique', 3, '632');
-        $add('63234', 'Internet - Tv Cabo', 3, '632');
-        $add('63235', 'Rendas e alugueres - IMOPAR', 3, '632');
-        $add('63236', 'Transporte de mercadorias - Transportes Lalgy', 3, '632');
-        $add('63237', 'Manutenção de viaturas - Centrocar', 3, '632');
-        $add('63238', 'Segurança e vigilância - G4S', 3, '632');
-        $add('63239', 'Limpeza de instalações - Folha Verde', 3, '632');
-        $add('63241', 'Publicidade e propaganda - Sociedade do Notícias', 3, '632');
-        $add('63242', 'Seguros - Hollard Moçambique', 3, '632');
-        $add('63243', 'Honorários de contabilidade - KPMG', 3, '632');
+        foreach ($this->fseContas($year) as [$codigo, $nome]) {
+            $add($codigo, $nome, 3, '632');
+        }
 
         $add('64', 'Amortizações do exercício', 1, null);
         $add('641', 'Activos tangíveis', 2, '64');
