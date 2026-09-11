@@ -1,0 +1,11 @@
+/storage/*.sqlite
+/storage/*.sqlite-journal
+/storage/*.log
+/vendor/
+/.idea/
+/.vscode/
+Thumbs.db
+.DS_Store
+*.tmp
+.env
+.env.local

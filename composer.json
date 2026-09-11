@@ -1,0 +1,17 @@
+{
+    "name": "santostinga/balancetes",
+    "description": "Simulador de balancete anual e relatório contabilístico ao estilo PRIMAVERA (SNC).",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        },
+        "files": [
+            "src/Support/helpers.php"
+        ]
+    }
+}
