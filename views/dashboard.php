@@ -5,10 +5,10 @@
     </div>
     <div class="actions">
         <?php if (!$company): ?>
-            <a class="btn gold" href="/empresa">Criar empresa</a>
+            <a class="btn gold" href="<?= e(url('/empresa')) ?>">Criar empresa</a>
         <?php else: ?>
-            <a class="btn" href="/simulacao">Simular exercício</a>
-            <a class="btn gold" href="/relatorio-anual">Relatório anual</a>
+            <a class="btn" href="<?= e(url('/simulacao')) ?>">Simular exercício</a>
+            <a class="btn gold" href="<?= e(url('/relatorio-anual')) ?>">Relatório anual</a>
         <?php endif; ?>
     </div>
 </section>
@@ -23,7 +23,7 @@
             <li>Gere a simulação — o motor cria lançamentos a débito e crédito equilibrados.</li>
             <li>Consulte o balancete, a razão e o relatório anual.</li>
         </ol>
-        <form method="post" action="/simulacao/demo" data-confirm="Isto substitui dados existentes pela empresa demonstração NorteAtlântico. Continuar?">
+        <form method="post" action="<?= e(url('/simulacao/demo')) ?>" data-confirm="Isto substitui dados existentes pela empresa demonstração NorteAtlântico. Continuar?">
             <?= csrf_field() ?>
             <button class="btn gold" type="submit">Carregar empresa demonstração + simular 2025</button>
         </form>
@@ -74,7 +74,7 @@
     <?php else: ?>
         <div class="panel">
             <p>A empresa está definida, mas o exercício ainda não foi simulado.</p>
-            <a class="btn gold" href="/simulacao">Abrir simulação</a>
+            <a class="btn gold" href="<?= e(url('/simulacao')) ?>">Abrir simulação</a>
         </div>
     <?php endif; ?>
 <?php endif; ?>

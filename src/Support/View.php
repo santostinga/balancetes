@@ -26,6 +26,18 @@ final class View
         include $views . '/' . $layout . '.php';
     }
 
+    public static function toString(string $template, array $data = [], string $layout = 'pdf/layout'): string
+    {
+        ob_start();
+        try {
+            self::render($template, $data, $layout);
+            return (string) ob_get_clean();
+        } catch (\Throwable $e) {
+            ob_end_clean();
+            throw $e;
+        }
+    }
+
     public static function json(array $data, int $status = 200): never
     {
         http_response_code($status);

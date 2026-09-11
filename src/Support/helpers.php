@@ -50,8 +50,38 @@ function verify_csrf(): void
     }
 }
 
+function app_base(): string
+{
+    $script = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? '/index.php'));
+    $dir = rtrim(dirname($script), '/');
+    if ($dir === '' || $dir === '/' || $dir === '\\' || $dir === '.') {
+        return '';
+    }
+
+    return $dir;
+}
+
+function url(string $path = '/'): string
+{
+    $query = '';
+    if (str_contains($path, '?')) {
+        [$path, $query] = explode('?', $path, 2);
+        $query = '?' . $query;
+    }
+    $path = '/' . ltrim($path, '/');
+    $base = app_base();
+    if ($path === '/') {
+        return ($base === '' ? '/' : $base . '/') . $query;
+    }
+
+    return $base . $path . $query;
+}
+
 function redirect(string $path): never
 {
+    if (!preg_match('#^https?://#i', $path)) {
+        $path = url($path);
+    }
     header('Location: ' . $path);
     exit;
 }

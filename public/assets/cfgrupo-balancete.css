@@ -1,0 +1,337 @@
+* { margin: 0; padding: 0; }
+
+@page {
+    size: A4 portrait;
+    margin: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 9px;
+    color: #444444;
+    background: #ffffff;
+}
+
+.page {
+    width: 100%;
+}
+
+.section-page {
+    width: 100%;
+}
+
+.break-before {
+    page-break-before: always;
+}
+
+.page-break {
+    page-break-after: always;
+}
+
+.screen-only {
+    display: none;
+    font-size: 8px;
+    margin-bottom: 6px;
+}
+
+@media screen {
+    .screen-only {
+        display: block;
+    }
+
+    .section-page,
+    .comparativo {
+        margin-bottom: 28px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #bbbbbb;
+    }
+
+    .comparativo:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+}
+
+.header-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 7px;
+}
+
+.header-table td {
+    vertical-align: top;
+    font-size: 8px;
+}
+
+.company-name {
+    font-weight: normal;
+}
+
+.page-number {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.title-line {
+    border-top: 1px solid #555555;
+    padding-top: 4px;
+    margin-top: 5px;
+}
+
+.title-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.title-table td {
+    vertical-align: bottom;
+}
+
+.report-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #555555;
+}
+
+.currency {
+    text-align: right;
+    font-size: 8px;
+    white-space: nowrap;
+}
+
+.info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+.info-table td {
+    width: 33%;
+    font-size: 8px;
+    vertical-align: bottom;
+}
+
+.info-box {
+    border-bottom: 1px solid #999999;
+    padding-bottom: 3px;
+}
+
+.info-gap {
+    width: 10px;
+}
+
+table.balance {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+table.balance col.account { width: 14%; }
+table.balance col.description { width: 27%; }
+table.balance col.money { width: 14.75%; }
+
+table.balance thead {
+    display: table-header-group;
+}
+
+table.balance thead td.repeat-head {
+    padding: 0;
+    border: 0;
+    font-weight: normal;
+}
+
+table.balance thead th {
+    border-top: 1px solid #555555;
+    border-bottom: 1px solid #888888;
+    padding: 2px 3px;
+    font-size: 8px;
+    font-weight: bold;
+    text-align: left;
+    white-space: nowrap;
+}
+
+table.balance thead th.num {
+    text-align: right;
+}
+
+table.balance tbody td {
+    padding: 1.6px 3px;
+    font-size: 8px;
+    line-height: 11px;
+    vertical-align: middle;
+}
+
+table.balance thead th.account,
+table.balance tbody td.account {
+    text-align: left;
+    padding-left: 0;
+    padding-right: 4px;
+    white-space: nowrap;
+}
+
+table.balance td.description {
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+table.balance td.num {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.level-1 td {
+    padding-top: 5px;
+}
+
+table.balance tr.total td {
+    font-weight: bold;
+    border-top: 1px solid #666666;
+    padding-top: 3px;
+    padding-bottom: 2px;
+}
+
+table.balance tr.total td.total-label,
+table.balance tr.total-saldos td.total-label,
+table.balance tr.grand-total td.total-label,
+table.balance tr.grand-total-saldos td.total-label {
+    text-align: right;
+}
+
+table.balance tr.total-saldos td {
+    font-weight: bold;
+    padding-top: 1px;
+    padding-bottom: 5px;
+}
+
+table.balance tr.grand-total td {
+    font-weight: bold;
+    border-top: 1px solid #555555;
+    padding-top: 5px;
+    padding-bottom: 2px;
+}
+
+table.balance tr.grand-total-saldos td {
+    font-weight: bold;
+    padding-top: 2px;
+}
+
+table.balance tr {
+    page-break-inside: avoid;
+}
+
+.comparativo {
+    color: #000000;
+    font-size: 8px;
+}
+
+.comparativo .report {
+    width: 100%;
+}
+
+.comparativo table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.comparativo col.col-rubrica {
+    width: 48%;
+}
+
+.comparativo col.col-nota {
+    width: 8%;
+}
+
+.comparativo col.col-valor {
+    width: 22%;
+}
+
+.comparativo th {
+    font-size: 8px;
+    font-weight: bold;
+    text-align: left;
+    padding: 3px 5px;
+    border-bottom: 1px solid #000000;
+}
+
+.comparativo th.center {
+    text-align: center;
+}
+
+.comparativo th.num {
+    text-align: right;
+}
+
+.comparativo td {
+    font-size: 8px;
+    padding: 2px 5px;
+    line-height: 11px;
+    vertical-align: middle;
+}
+
+.comparativo td.num {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.comparativo td.center {
+    text-align: center;
+}
+
+.comparativo td.rubrica {
+    text-align: left;
+}
+
+.comparativo .section td {
+    font-weight: bold;
+    padding-top: 7px;
+}
+
+.comparativo .subsection td {
+    font-weight: bold;
+    padding-top: 4px;
+}
+
+.comparativo td.level-1 {
+    padding-left: 15px;
+}
+
+.comparativo td.level-2 {
+    padding-left: 30px;
+}
+
+.comparativo td.level-3 {
+    padding-left: 45px;
+}
+
+.comparativo tr.subtotal td {
+    font-weight: bold;
+    border-top: 1px solid #000000;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.comparativo tr.total td {
+    font-weight: bold;
+    border-top: 2px solid #000000;
+    border-bottom: 1px solid #000000;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.comparativo tr.grand-total td {
+    font-weight: bold;
+    border-top: 2px solid #000000;
+    border-bottom: 2px solid #000000;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.comparativo tr {
+    page-break-inside: avoid;
+}

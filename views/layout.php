@@ -14,6 +14,7 @@ $nav = [
     ['/balancete', 'Balancete', 'table'],
     ['/razao', 'Razão', 'rows'],
     ['/relatorio-anual', 'Relatório anual', 'file'],
+    ['/cf-grupo', 'CF GRUPO SA', 'pdf'],
 ];
 function nav_active(string $path, string $href): bool {
     if ($href === '/') {
@@ -31,7 +32,7 @@ function nav_active(string $path, string $href): bool {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/app.css">
+    <link rel="stylesheet" href="<?= e(url('/assets/app.css')) ?>">
 </head>
 <body>
 <div class="shell">
@@ -45,7 +46,7 @@ function nav_active(string $path, string $href): bool {
         </div>
         <nav>
             <?php foreach ($nav as [$href, $label]): ?>
-                <a href="<?= e($href) ?>" class="<?= nav_active($path, $href) ? 'is-on' : '' ?>"><?= e($label) ?></a>
+                <a href="<?= e(url($href)) ?>" class="<?= nav_active($path, $href) ? 'is-on' : '' ?>"><?= e($label) ?></a>
             <?php endforeach; ?>
         </nav>
         <div class="rail-foot">
@@ -64,6 +65,6 @@ function nav_active(string $path, string $href): bool {
     </main>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="/assets/app.js"></script>
+<script src="<?= e(url('/assets/app.js')) ?>"></script>
 </body>
 </html>

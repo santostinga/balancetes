@@ -25,8 +25,8 @@
                     <td class="num"><?= e((string) $p['margem_percent']) ?>%</td>
                     <td class="num"><?= (int) $p['volume_mensal_min'] ?>–<?= (int) $p['volume_mensal_max'] ?></td>
                     <td>
-                        <a href="/produtos?id=<?= (int) $p['id'] ?>">Editar</a>
-                        <form method="post" action="/produtos/<?= (int) $p['id'] ?>/delete" data-confirm="Eliminar este produto?" style="display:inline">
+                        <a href="<?= e(url('/produtos')) ?>?id=<?= (int) $p['id'] ?>">Editar</a>
+                        <form method="post" action="<?= e(url('/produtos/' . (int) $p['id'] . '/delete')) ?>" data-confirm="Eliminar este produto?" style="display:inline">
                             <?= csrf_field() ?>
                             <button class="btn ghost" type="submit">Eliminar</button>
                         </form>
@@ -41,7 +41,7 @@
     </div>
 </div>
 
-<form class="panel sheet" method="post" action="/produtos">
+<form class="panel sheet" method="post" action="<?= e(url('/produtos')) ?>">
     <?= csrf_field() ?>
     <h2><?= $edit ? 'Editar produto' : 'Novo produto / serviço' ?></h2>
     <input type="hidden" name="id" value="<?= e((string) ($edit['id'] ?? '')) ?>">
@@ -101,6 +101,6 @@
     </label>
     <p class="actions" style="margin-top:16px">
         <button class="btn gold" type="submit"><?= $edit ? 'Actualizar' : 'Criar produto' ?></button>
-        <?php if ($edit): ?><a class="btn ghost" href="/produtos">Cancelar</a><?php endif; ?>
+        <?php if ($edit): ?><a class="btn ghost" href="<?= e(url('/produtos')) ?>">Cancelar</a><?php endif; ?>
     </p>
 </form>

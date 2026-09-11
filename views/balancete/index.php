@@ -6,7 +6,7 @@
     <?php if ($trial): ?>
         <div class="actions">
             <a class="btn ghost" href="?ano=<?= (int) $year ?>&amp;de=<?= (int) $from ?>&amp;ate=<?= (int) $to ?>&amp;export=1">Exportar CSV</a>
-            <button class="btn" type="button" onclick="window.print()">Imprimir</button>
+            <a class="btn gold" href="<?= e(url('/balancete/pdf')) ?>?ano=<?= (int) $year ?>&amp;de=<?= (int) $from ?>&amp;ate=<?= (int) $to ?><?= $only ? '' : '&amp;todas=1' ?>">Descarregar PDF</a>
         </div>
     <?php endif; ?>
 </section>
@@ -65,7 +65,7 @@
                     <tr class="class-row"><td colspan="8"><?= e((string) $classe . ' — ' . account_class_name((int) $classe)) ?></td></tr>
                     <?php foreach ($rows as $row): ?>
                         <tr>
-                            <td><a href="/razao?conta=<?= e(urlencode($row['codigo'])) ?>&amp;ano=<?= (int) $year ?>"><?= e($row['codigo']) ?></a></td>
+                            <td><a href="<?= e(url('/razao')) ?>?conta=<?= e(urlencode($row['codigo'])) ?>&amp;ano=<?= (int) $year ?>"><?= e($row['codigo']) ?></a></td>
                             <td><?= e($row['nome']) ?></td>
                             <td class="num debit"><?= money_cell((float) $row['ant_d']) ?></td>
                             <td class="num credit"><?= money_cell((float) $row['ant_c']) ?></td>

@@ -4,13 +4,13 @@
         <p>Demonstração de resultados, balanço, análise por área/produto e indicadores.</p>
     </div>
     <div class="actions">
-        <button class="btn" type="button" onclick="window.print()">Imprimir relatório</button>
-        <a class="btn ghost" href="/balancete">Ver balancete</a>
+        <a class="btn gold" href="<?= e(url('/relatorio-anual/pdf')) ?>?ano=<?= (int) $year ?>">Descarregar PDF</a>
+        <a class="btn ghost" href="<?= e(url('/balancete')) ?>">Ver balancete</a>
     </div>
 </section>
 
 <?php if (!$report): ?>
-    <div class="panel">Ainda não há simulação para este exercício. <a href="/simulacao">Gerar agora</a>.</div>
+    <div class="panel">Ainda não há simulação para este exercício. <a href="<?= e(url('/simulacao')) ?>">Gerar agora</a>.</div>
 <?php else: $dr = $report['dr']; $ba = $report['balanco']; $k = $report['kpis']; ?>
     <p class="muted"><?= e($company['nome']) ?> · NIF <?= e($company['nif'] ?? '—') ?> · Exercício <?= (int) $year ?></p>
 

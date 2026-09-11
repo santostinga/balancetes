@@ -6,7 +6,7 @@
 </section>
 
 <div class="grid grid-2">
-    <form class="panel sheet" method="post" action="/simulacao/gerar" data-confirm="Os lançamentos simulados deste exercício serão substituídos. Continuar?">
+    <form class="panel sheet" method="post" action="<?= e(url('/simulacao/gerar')) ?>" data-confirm="Os lançamentos simulados deste exercício serão substituídos. Continuar?">
         <?= csrf_field() ?>
         <div class="fields">
             <div>
@@ -43,7 +43,7 @@
     <div class="panel">
         <h2>Atalhos</h2>
         <p class="muted">Pode carregar um caso completo (NorteAtlântico Serviços) com quatro áreas e oito serviços, e simular 2025 de imediato.</p>
-        <form method="post" action="/simulacao/demo" data-confirm="Substitui empresa, áreas, produtos e lançamentos. Continuar?">
+        <form method="post" action="<?= e(url('/simulacao/demo')) ?>" data-confirm="Substitui empresa, áreas, produtos e lançamentos. Continuar?">
             <?= csrf_field() ?>
             <button class="btn" type="submit">Carregar demonstração</button>
         </form>

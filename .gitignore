@@ -1,6 +1,8 @@
 /storage/*.sqlite
 /storage/*.sqlite-journal
 /storage/*.log
+/storage/tmp/*
+!/storage/tmp/.gitkeep
 /vendor/
 /.idea/
 /.vscode/

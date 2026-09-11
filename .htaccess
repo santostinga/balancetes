@@ -1,2 +1,8 @@
-RewriteEngine On
-RewriteRule ^(.*)$ public/$1 [L]
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$ index.php [L]
+    RewriteCond %{REQUEST_URI} !/public/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+DirectoryIndex index.php public/index.php

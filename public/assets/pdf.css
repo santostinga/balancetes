@@ -1,0 +1,68 @@
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    padding: 0;
+    color: #1c1917;
+    font-family: "Segoe UI", Calibri, Arial, sans-serif;
+    font-size: 10.5px;
+    line-height: 1.35;
+}
+h1 { margin: 0 0 4px; font-size: 20px; letter-spacing: -0.02em; color: #12263a; }
+h2 { margin: 16px 0 8px; font-size: 13px; color: #12263a; border-bottom: 1px solid #a6844a; padding-bottom: 3px; }
+.doc-head { margin-bottom: 12px; overflow: hidden; }
+.mark {
+    float: left;
+    width: 36px; height: 36px; line-height: 36px; text-align: center;
+    border: 1px solid #a6844a; color: #a6844a; font-size: 10px; font-weight: 700;
+    margin-right: 10px;
+}
+.meta { color: #6b6258; font-size: 10px; }
+.kpis { width: 100%; border-collapse: separate; border-spacing: 6px 0; margin: 4px 0 12px; }
+.kpis td {
+    width: 25%;
+    background: #fbf8f1;
+    border: 1px solid #d9d1c3;
+    padding: 8px 10px;
+    vertical-align: top;
+}
+.kpis span { display: block; color: #6b6258; font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; }
+.kpis strong { display: block; margin-top: 4px; font-size: 13px; font-family: Consolas, "Courier New", monospace; }
+.kpis em { font-style: normal; color: #6b6258; font-size: 9px; }
+.split { width: 100%; border-collapse: collapse; }
+.split > tbody > tr > td { width: 50%; vertical-align: top; padding: 0 8px 0 0; }
+.split > tbody > tr > td + td { padding: 0 0 0 8px; }
+table.ledger { width: 100%; border-collapse: collapse; font-size: 9.5px; }
+table.ledger th, table.ledger td {
+    padding: 4px 6px;
+    border-bottom: 0.5pt solid #d9d1c3;
+    text-align: left;
+    vertical-align: top;
+}
+table.ledger th {
+    background: #efe8da;
+    font-size: 8px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #6b6258;
+}
+table.ledger td.num, table.ledger th.num {
+    text-align: right;
+    font-family: Consolas, "Courier New", monospace;
+    white-space: nowrap;
+}
+table.ledger td.debit { color: #8f2d3c; }
+table.ledger td.credit { color: #1f6b52; }
+table.ledger tfoot td { font-weight: 700; background: #efe8da; }
+table.ledger tr.class-row td {
+    background: #12263a;
+    color: #f4efe6;
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 0.03em;
+}
+.entry { margin-bottom: 10px; page-break-inside: avoid; }
+.entry .ttl { font-weight: 700; }
+.muted { color: #6b6258; }
+.note { margin-top: 14px; font-size: 8.5px; color: #6b6258; }
+thead { display: table-header-group; }
+tr { page-break-inside: avoid; }

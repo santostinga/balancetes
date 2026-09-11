@@ -3,6 +3,9 @@
         <h1>Razão</h1>
         <p>Extracto da conta no exercício, com saldo corrente.</p>
     </div>
+    <div class="actions">
+        <a class="btn gold" href="<?= e(url('/razao/pdf')) ?>?conta=<?= e(urlencode($codigo)) ?>&amp;ano=<?= (int) $year ?>">Descarregar PDF</a>
+    </div>
 </section>
 
 <form class="panel filters" method="get">

@@ -5,7 +5,7 @@
     </div>
 </section>
 
-<form class="panel sheet" method="post" action="/empresa">
+<form class="panel sheet" method="post" action="<?= e(url('/empresa')) ?>">
     <?= csrf_field() ?>
     <div class="fields">
         <div class="full">

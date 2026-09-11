@@ -1,5 +1,6 @@
-$php = 'C:\laragon\bin\php\php-8.3.33-Win32-vs16-x64\php.exe'
-$root = Split-Path -Parent $PSScriptRoot
-Set-Location $root
-Write-Host "Simulador de balancete em http://127.0.0.1:8080"
-& $php -S 127.0.0.1:8080 -t public public\router.php
+# Abre o gerador no Apache do Laragon.
+$local = "http://127.0.0.1/balancetes/public/cf-grupo"
+Start-Process $local
+Write-Host "Aberto: $local"
+Write-Host "No menu do Laragon: www -> balancetes"
+Write-Host "Pretty URL (depois de Reload no Laragon): http://balancetes.test/cf-grupo"

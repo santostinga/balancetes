@@ -14,7 +14,7 @@
                 <tr class="class-row"><td colspan="5"><?= e((string) $last . ' · ' . account_class_name($last)) ?></td></tr>
             <?php endif; ?>
             <tr>
-                <td><a href="/razao?conta=<?= e(urlencode($account['codigo'])) ?>"><?= e($account['codigo']) ?></a></td>
+                <td><a href="<?= e(url('/razao')) ?>?conta=<?= e(urlencode($account['codigo'])) ?>"><?= e($account['codigo']) ?></a></td>
                 <td><?= e($account['nome']) ?></td>
                 <td><?= e((string) $account['classe']) ?></td>
                 <td><?= e($account['natureza']) ?></td>

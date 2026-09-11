@@ -10,21 +10,17 @@ Aplicação PHP para **simular um exercício contabilístico completo**: a empre
 - Plano de contas SNC resumido (classes 1–8)
 - Simulação de 12 meses (vendas, recebimentos, custos, salários, IVA, depreciação, IRC)
 - Diário, balancete de verificação, razão e relatório anual
+- Exportação PDF via **wkhtmltopdf** (balancete, relatório anual, razão e diário)
 - Empresa demonstração: **NorteAtlântico Serviços, Lda** (exercício 2025)
 
 ## Como correr no Laragon
 
-1. Esta pasta já está em `C:\laragon\balancetes`.
-2. No Laragon, adicione o site com document root em `public` **ou** abra `http://balancetes.test` se o virtual host apontar para a pasta (o `.htaccess` na raiz encaminha para `public/`).
-3. PHP 8.2+ com extensão `pdo_sqlite` (incluída no PHP do Laragon).
+O projecto está em `C:\laragon\balancetes`. O Apache serve a pasta `public/` em **http://balancetes.test** (virtual host, sem atalho em `www`).
 
-Servidor embutido (PowerShell):
+1. No ícone do Laragon, **Reload** (ou Stop e Start), para actualizar o `hosts` e o Apache.
+2. Abra [http://balancetes.test](http://balancetes.test).
 
-```powershell
-.\scripts\serve.ps1
-```
-
-Depois abra [http://127.0.0.1:8080](http://127.0.0.1:8080).
+PHP 8.2+ com `pdo_sqlite`. O virtual host está em `C:\laragon\etc\apache2\sites-enabled\auto.balancetes.test.conf`.
 
 ## Fluxo de trabalho
 
@@ -32,7 +28,7 @@ Depois abra [http://127.0.0.1:8080](http://127.0.0.1:8080).
 2. **Áreas de serviço** — códigos, custos fixos e massa salarial mensal.
 3. **Produtos e margens** — preço min/máx, custo unitário, volume mensal.
 4. **Simulação** — gere o ano (o mesmo *seed* reproduz o mesmo resultado).
-5. **Balancete / Relatório anual** — analise, exporte CSV e imprima.
+5. **Balancete / Relatório anual** — analise, exporte CSV ou descarregue PDF (wkhtmltopdf).
 
 Atalho: no painel, *Carregar empresa demonstração + simular 2025*.
 
@@ -48,3 +44,14 @@ storage/         database.sqlite (gerada automaticamente)
 ```
 
 Os lançamentos são sempre equilibrados (débito = crédito). A base `storage/database.sqlite` não vai para o Git.
+
+## PDF (wkhtmltopdf)
+
+A geração de PDF usa o binário local do [wkhtmltopdf](https://wkhtmltopdf.org/) (testado com 0.12.6, Qt patched). Caminhos detectados automaticamente:
+
+- `WKHTMLTOPDF` (variável de ambiente)
+- `C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe`
+- `bin/wkhtmltopdf.exe` na raiz do projecto
+- `wkhtmltopdf` no PATH
+
+Botões **Descarregar PDF** no balancete (A4 horizontal), relatório anual, razão e diário.

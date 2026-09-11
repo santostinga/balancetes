@@ -3,9 +3,12 @@
         <h1>Diário</h1>
         <p>Lançamentos do exercício, com documento, área e linhas a débito/crédito.</p>
     </div>
+    <div class="actions">
+        <a class="btn gold" href="<?= e(url('/diario/pdf')) ?>?ano=<?= (int) $year ?>&amp;mes=<?= e((string) ($month ?? '')) ?>&amp;area=<?= e((string) ($areaId ?? '')) ?>">Descarregar PDF</a>
+    </div>
 </section>
 
-<form class="panel filters" method="get" action="/diario">
+<form class="panel filters" method="get" action="<?= e(url('/diario')) ?>">
     <div class="fields three">
         <div>
             <label>Ano</label>
@@ -68,7 +71,7 @@
             <tbody>
             <?php foreach ($entry['lines'] as $line): ?>
                 <tr>
-                    <td><a href="/razao?conta=<?= e(urlencode($line['account_codigo'])) ?>&amp;ano=<?= e((string) $year) ?>"><?= e($line['account_codigo']) ?></a></td>
+                    <td><a href="<?= e(url('/razao')) ?>?conta=<?= e(urlencode($line['account_codigo'])) ?>&amp;ano=<?= e((string) $year) ?>"><?= e($line['account_codigo']) ?></a></td>
                     <td><?= e($line['conta_nome']) ?><?= $line['descricao'] ? ' — ' . e($line['descricao']) : '' ?></td>
                     <td class="num debit"><?= money_cell((float) $line['debito']) ?></td>
                     <td class="num credit"><?= money_cell((float) $line['credito']) ?></td>

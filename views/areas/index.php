@@ -19,8 +19,8 @@
                     <td class="num"><?= money_cell((float) $area['custo_fixo_mensal']) ?></td>
                     <td class="num"><?= money_cell((float) $area['custo_pessoal_mensal']) ?></td>
                     <td>
-                        <a href="/areas?id=<?= (int) $area['id'] ?>">Editar</a>
-                        <form method="post" action="/areas/<?= (int) $area['id'] ?>/delete" data-confirm="Eliminar esta área?" style="display:inline">
+                        <a href="<?= e(url('/areas')) ?>?id=<?= (int) $area['id'] ?>">Editar</a>
+                        <form method="post" action="<?= e(url('/areas/' . (int) $area['id'] . '/delete')) ?>" data-confirm="Eliminar esta área?" style="display:inline">
                             <?= csrf_field() ?>
                             <button class="btn ghost" type="submit">Eliminar</button>
                         </form>
@@ -34,7 +34,7 @@
         </table>
     </div>
 
-    <form class="panel sheet" method="post" action="/areas">
+    <form class="panel sheet" method="post" action="<?= e(url('/areas')) ?>">
         <?= csrf_field() ?>
         <h2><?= $edit ? 'Editar área' : 'Nova área' ?></h2>
         <input type="hidden" name="id" value="<?= e((string) ($edit['id'] ?? '')) ?>">
@@ -63,7 +63,7 @@
         <label class="check"><input type="checkbox" name="activa" value="1" <?= !$edit || (int) $edit['activa'] ? 'checked' : '' ?>> Área activa na simulação</label>
         <p class="actions" style="margin-top:16px">
             <button class="btn gold" type="submit"><?= $edit ? 'Actualizar' : 'Criar área' ?></button>
-            <?php if ($edit): ?><a class="btn ghost" href="/areas">Cancelar</a><?php endif; ?>
+            <?php if ($edit): ?><a class="btn ghost" href="<?= e(url('/areas')) ?>">Cancelar</a><?php endif; ?>
         </p>
     </form>
 </div>
